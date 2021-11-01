@@ -1,6 +1,6 @@
 from random import randint
 num = randint(0,99)
-intentos = 0
+intentos = 1
 guess = int(input('Adivina el número del 0 al 99: '))
 while guess!=num:
     if guess<num:
