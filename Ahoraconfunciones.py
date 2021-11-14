@@ -3,6 +3,7 @@ from random import randint
 registro = []
 SI = ("s", "si", "y", "yes", "1")
 
+
 def pedir_entrada_si_o_no(invitacion):
     """Por defecto, cualquier respuesta no contemplada vale NO"""
     try:
@@ -20,8 +21,8 @@ def pedir_numero(invitacion):
         else:
             return entrada
 
-def pedir_numero_limite(invitacion, minimo, maximo):
-    if pedir_entrada_si_o_no("¿Desea jugar conociendo los límites?"):
+def pedir_numero_limite(invitacion, minimo, maximo, ayuda):
+    if ayuda:
         while True:
             invitacion = "{} entre {} y {} incluidos".format(invitacion, minimo, maximo)
             entrada = pedir_numero(invitacion)
@@ -34,8 +35,8 @@ def pedir_numero_limite(invitacion, minimo, maximo):
             if minimo <= entrada <= maximo:
                 return entrada
 
-def jugar_una_vez(numero, minimo, maximo, intentos, max_intentos):
-    intento = pedir_numero_limite("Adivine el número", minimo, maximo)
+def jugar_una_vez(numero, minimo, maximo, intentos, max_intentos, ayuda):
+    intento = pedir_numero_limite("Adivine el número", minimo, maximo, ayuda)
     if intento < numero:
         print("Demasiado pequeño")
         minimo = intento + 1
@@ -52,20 +53,21 @@ def jugar_una_vez(numero, minimo, maximo, intentos, max_intentos):
         registro.append((nombre,intentos))
         victoria = True
         minimo = maximo = intento
-    return victoria, minimo, maximo, intentos, max_intentos
+    return victoria, minimo, maximo, intentos, max_intentos, ayuda
 
-def jugar_una_partida(numero, minimo, maximo, intentos, max_intentos):
+def jugar_una_partida(numero, minimo, maximo, intentos, max_intentos, ayuda):
     victoria = False
     while not victoria:
         if intentos==max_intentos:
             print('Lo siento, te has quedado sin intentos')
             break
         else:
-            victoria, minimo, maximo, intentos, max_intentos = jugar_una_vez(numero, minimo, maximo, intentos, max_intentos)
+            victoria, minimo, maximo, intentos, max_intentos, ayuda = jugar_una_vez(numero, minimo, maximo, intentos, max_intentos, ayuda)
 
 def decidir_limites():
     while True:
         nivel = pedir_numero("Elige un nivel de dificultad del 1 al 4: ")
+        ayuda = pedir_entrada_si_o_no("¿Desea jugar conociendo los límites?")
         intentos = 0
         if nivel<1 or nivel>4:
             print("Error. Introduce un nivel válido")
@@ -85,17 +87,16 @@ def decidir_limites():
             max_intentos = 1000000
             minimo=0
             maximo=1000000000000
-        return minimo, maximo, intentos, max_intentos
+        return minimo, maximo, intentos, max_intentos, ayuda
 
 def jugar():
-    minimo, maximo, intentos, max_intentos = decidir_limites()
+    minimo, maximo, intentos, max_intentos, ayuda = decidir_limites()
     while True:
         numero = randint(minimo,maximo)
-        jugar_una_partida(numero, minimo, maximo, intentos, max_intentos)
+        jugar_una_partida(numero, minimo, maximo, intentos, max_intentos, ayuda)
         if not pedir_entrada_si_o_no("¿Desea jugar una nueva partida?"):
             print("¡Hasta pronto!")
             return
-
 
 def jugar_una_vez_IA(numero, minimo, maximo, intentos, max_intentos):
     intento = randint(minimo,maximo)
